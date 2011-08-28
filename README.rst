@@ -13,6 +13,7 @@ For example, if we have two settings like objects:
 and ``B`` with attribute ``b``
 and we construct registry as::
 
+    >>>from multi_registry import MultiRegistry
     >>>r = MultiRegistry()
     >>>r.append(A)
     >>>r.append(B)
