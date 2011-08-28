@@ -11,7 +11,7 @@ in the order the latter were appended.
 For example, if we have two settings like objects:
 ``A`` with attribute ``a``
 and ``B`` with attribute ``b``
-and we construct registry as:
+and we construct registry as::
 
     >>>r = MultiRegistry()
     >>>r.append(A)
