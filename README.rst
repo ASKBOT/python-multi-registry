@@ -13,14 +13,14 @@ For example, if we have two settings like objects:
 and ``B`` with attribute ``b``
 and we construct registry as:
 
->>>r = MultiRegistry()
->>>r.append(A)
->>>r.append(B)
+    >>>r = MultiRegistry()
+    >>>r.append(A)
+    >>>r.append(B)
 
 then access the registry as:
 
-r.b - attrubute b will be first looked
-up in the object A, then in the object B, where
+``r.b`` - attrubute b will be first looked
+up in the object ``A``, then in the object ``B``, where
 it will be found.
 
 If there is an attribute present in more than one appended object,
