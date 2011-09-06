@@ -3,8 +3,9 @@ please see doc string in the class for the further information.
 """
 #todo: allow adding dictionaries as registry stores
 #todo: support caching
+from import_utils import import_module_from
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 class MultiRegistry(object):
     """Allows to aggregate key-value data from many sources.
@@ -23,8 +24,8 @@ class MultiRegistry(object):
     and we construct registry as:
 
     >>>r = MultiRegistry()
-    >>>r.append(A)
-    >>>r.append(B)
+    >>>r.append_registry(A)
+    >>>r.append_registry(B)
 
     then access the registry as:
 
@@ -35,13 +36,29 @@ class MultiRegistry(object):
     If there is an attribute present in more than one appended object,
     the first one will be returned - in the order of ``append()`` call.
 
+    A second way to initialize the registry is to supply a tuple or a list
+    of registry objects or python paths to those objects to the __init__ method:
+
+    >>>r = MultiRegistry([settings, 'mymodule.conf.settings'])
+
+    The tuple or a list may be mixed - some items might be settings objects
+    and others - python dotted paths.
+
     If the attribute is not found, attribute error will be 
     raised.
     """
-    def __init__(self):
+    def __init__(self, registry_objects = None):
         self.registry_stores = list()
+        if registry_objects:
+            for reg_info in registry_objects:
+                if isinstance(reg_info, str):
+                    reg_obj = import_module_from(reg_info)
+                else:
+                    reg_obj = reg_info
+            self.registry_stores.append(reg_obj)
+                    
 
-    def append(self, registry_store):
+    def append_registry(self, registry_store):
         """adds a registry object to the list of
         """
         self.registry_stores.append(registry_store)

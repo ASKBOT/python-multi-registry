@@ -1,7 +1,6 @@
 import ez_setup
 ez_setup.use_setuptools()
 from setuptools import setup, find_packages
-import sys
 
 import multi_registry
 
@@ -16,6 +15,7 @@ setup(
     keywords = 'settings, registry',
     url = 'http://askbot.org',
     include_package_data = True,
+    install_requires = ['import-utils',],
     classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
