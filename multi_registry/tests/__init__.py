@@ -6,7 +6,7 @@ from multi_registry.tests import settings2
 class MultiRegistryTests(unittest.TestCase):
 
     def init_from_modules(self):
-        return MultiRegistry([settings1, settings2])
+        return MultiRegistry(settings1, settings2)
 
     def test_init_from_modules(self):
         r = self.init_from_modules()
@@ -29,11 +29,10 @@ class MultiRegistryTests(unittest.TestCase):
         self.assertEqual(r.ONE, '21')
 
     def test_init_from_paths(self):
-        reg_list = [
+        r = MultiRegistry(
             'multi_registry.tests.settings1',
             'multi_registry.tests.settings2'
-        ]
-        r = MultiRegistry(reg_list)
+        )
         self.assertEqual(len(r.registry_stores), 2)
 
     def test_append_order(self):

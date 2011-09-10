@@ -24,7 +24,7 @@ class MultiRegistry(object):
     and a third one, found in module importable from ``'some.registry.C'``,
     we can construct the registry as:
 
-    >>>r = MultiRegistry([A, B, 'some.registry.C'])
+    >>>r = MultiRegistry(A, B, 'some.registry.C')
 
     or alternatively:
 
@@ -55,11 +55,10 @@ class MultiRegistry(object):
     If the attribute is not found, attribute error will be 
     raised.
     """
-    def __init__(self, registry_objects = None):
+    def __init__(self, *args):
         self.registry_stores = list()
-        if registry_objects:
-            for reg in registry_objects:
-                self.append(reg)
+        for registry in args:
+            self.append(registry)
 
     def append(self, registry_store):
         """adds a registry object to the list of
