@@ -21,11 +21,22 @@ class MultiRegistry(object):
     For example, if we have two settings like objects:
     ``A`` with attribute ``a``
     and ``B`` with attribute ``b``
-    and we construct registry as:
+    and a third one, found in module importable from ``'some.registry.C'``,
+    we can construct the registry as:
+
+    >>>r = MultiRegistry([A, B, 'some.registry.C'])
+
+    or alternatively:
 
     >>>r = MultiRegistry()
-    >>>r.append_registry(A)
-    >>>r.append_registry(B)
+    >>>r.append(A)
+    >>>r.append(B)
+    >>>r.insert(2, 'some.registry.C')
+
+    .. note::
+        The registries can be provided as python objects or
+        dotted python paths. In the latter case an import error will
+        be raised if module at the path does not exist
 
     then access the registry as:
 
@@ -34,15 +45,12 @@ class MultiRegistry(object):
     it will be found.
 
     If there is an attribute present in more than one appended object,
-    the first one will be returned - in the order of ``append()`` call.
+    the first one will be returned - in the same order the 
+    registries are stored internally, which takes into account:
 
-    A second way to initialize the registry is to supply a tuple or a list
-    of registry objects or python paths to those objects to the __init__ method:
-
-    >>>r = MultiRegistry([settings, 'mymodule.conf.settings'])
-
-    The tuple or a list may be mixed - some items might be settings objects
-    and others - python dotted paths.
+    * order the registries were provided at the object initialization
+    * order of ``append()`` calls.
+    * taking into account indices provided with ``insert()`` call
 
     If the attribute is not found, attribute error will be 
     raised.
@@ -50,18 +58,26 @@ class MultiRegistry(object):
     def __init__(self, registry_objects = None):
         self.registry_stores = list()
         if registry_objects:
-            for reg_info in registry_objects:
-                if isinstance(reg_info, str):
-                    reg_obj = import_module_from(reg_info)
-                else:
-                    reg_obj = reg_info
-            self.registry_stores.append(reg_obj)
-                    
+            for reg in registry_objects:
+                self.append(reg)
 
-    def append_registry(self, registry_store):
+    def append(self, registry_store):
         """adds a registry object to the list of
         """
-        self.registry_stores.append(registry_store)
+        last_pos = len(self.registry_stores)
+        self.insert(last_pos, registry_store)
+
+    def insert(self, index, registry_store):
+        """Inserts a registry store at a given position in the
+        internal registry list"""
+        if isinstance(registry_store, str):
+            reg_obj = import_module_from(registry_store)
+        else:
+            reg_obj = registry_store
+
+        if reg_obj in self.registry_stores:
+            raise ValueError('duplicate registry inserted')
+        self.registry_stores.insert(index, reg_obj)
 
     def __getattr__(self, attr_name):
         for store in self.registry_stores:
